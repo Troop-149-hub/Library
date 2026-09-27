@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troop 149 Library</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --canvas: #E9E4D2;
+  --paper: #FCFBF6;
+  --stripe: #F5F2E6;
+  --pine: #1F3328;
+  --trail: #4B6B53;
+  --trail-dark: #3A5541;
+  --trail-tint: #DEE7DD;
+  --brass: #B0813A;
+  --brass-dark: #8A5F22;
+  --brass-tint: #F3E6CC;
+  --ember: #8B3A2B;
+  --ember-tint: #F1DAD3;
+  --bark: #6B5A45;
+  --border: #D6CEB4;
+  --border-paper: #E7E1CC;
+  --ink: #26231C;
+  --ink-muted: #6B6152;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+h1, h2, h3 { font-family: 'Zilla Slab', Georgia, serif; color: var(--pine); }
+
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- header ---------- */
+
+header {
+  background: var(--pine);
+  color: var(--paper);
+  padding: 28px 20px;
+}
+
+.header-inner {
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.emblem { color: var(--brass); flex-shrink: 0; }
+
+header h1 { margin: 0; color: var(--paper); font-size: 26px; }
+header p { margin: 4px 0 0; color: #C9D3C9; font-size: 14.5px; }
+
+/* ---------- note banner ---------- */
+
+.note-banner {
+  background: var(--brass-tint);
+  color: var(--brass-dark);
+  text-align: center;
+  font-size: 13.5px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.note-banner a { color: var(--brass-dark); font-weight: 600; }
+
+/* ---------- layout ---------- */
+
+.container { width: min(1200px, 94%); margin: 28px auto; }
+.page { display: none; }
+.page.active { display: block; }
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--border-paper);
+  border-radius: 12px;
+  padding: 26px;
+  margin-bottom: 20px;
+}
+
+/* ---------- back button ---------- */
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--pine);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-family: 'Work Sans';
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.back-btn:hover { background: var(--stripe); }
+
+/* ---------- home ---------- */
+
+.hero-card { position: relative; overflow: hidden; }
+
+.hero-contours {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: var(--border);
+  stroke-width: 2;
+  fill: none;
+  opacity: .7;
+}
+
+.hero-card h2, .hero-card p { position: relative; }
+.hero-card p { color: var(--ink-muted); max-width: 62ch; }
+
+.trailhead-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.trailhead-card {
+  position: relative;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--border-paper);
+  border-top: 4px solid var(--trail);
+  border-radius: 12px;
+  padding: 22px;
+  font-family: 'Work Sans';
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.trailhead-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(31,51,40,.12); }
+.trailhead-card.brass { border-top-color: var(--brass); }
+.trailhead-card.pine { border-top-color: var(--pine); }
+.trailhead-card.bark { border-top-color: var(--bark); }
+.trailhead-card .icon { color: var(--trail); margin-bottom: 14px; }
+.trailhead-card.brass .icon { color: var(--brass); }
+.trailhead-card.pine .icon { color: var(--pine); }
+.trailhead-card.bark .icon { color: var(--bark); }
+.trailhead-card h3 { margin: 0 0 6px; font-size: 19px; }
+.trailhead-card p { margin: 0; color: var(--ink-muted); font-size: 14px; }
+.trailhead-card .tag { display: block; margin-top: 10px; font-size: 12.5px; color: var(--bark); }
+
+/* ---------- catalog sections ---------- */
+
+.section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.section-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--trail); flex-shrink: 0; }
+.section-dot.brass { background: var(--brass); }
+.section-dot.bark { background: var(--bark); }
+.section-dot.pine { background: var(--pine); }
+.section-head h2 { margin: 0; font-size: 21px; }
+.section-sub { color: var(--ink-muted); font-size: 14px; margin: 6px 0 18px; }
+
+.resource-links { list-style: none; padding: 0; margin: 16px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.resource-links li { padding: 11px 14px; background: var(--canvas); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--ink-muted); }
+.resource-links a { color: var(--pine); font-weight: 600; text-decoration: none; }
+.resource-links a:hover { text-decoration: underline; }
+
+.search-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Work Sans';
+  background: var(--paper);
+  color: var(--ink);
+}
+.search-input:focus { border-color: var(--trail); }
+
+.filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 4px; }
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.filter-chip input { accent-color: var(--trail); }
+
+input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+
+/* ---------- tables ---------- */
+
+.table-wrapper { overflow-x: auto; margin-top: 18px; }
+table { width: 100%; border-collapse: collapse; min-width: 760px; font-size: 14.5px; }
+
+thead th {
+  background: var(--pine);
+  color: var(--paper);
+  text-align: left;
+  padding: 11px 12px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border-paper); vertical-align: middle; }
+tbody tr:nth-child(even) { background: var(--stripe); }
+tbody tr:hover { background: var(--trail-tint); }
+
+.book-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 600;
+  color: var(--pine);
+}
+
+.unavailable { color: var(--ink-muted); font-size: 13.5px; }
+
+.pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.pill-in { background: var(--trail-tint); color: var(--trail-dark); border-color: #C7D6C8; }
+.pill-out { background: var(--ember-tint); color: var(--ember); border-color: #E3C4BA; }
+.pill-eagle { background: var(--brass-tint); color: var(--brass-dark); border-color: #E3CDA0; }
+
+.empty, .loading { padding: 26px; text-align: center; color: var(--ink-muted); }
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-block;
+  font-family: 'Work Sans';
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: background-color .15s ease, transform .1s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--trail); color: var(--paper); }
+.btn-primary:hover { background: var(--trail-dark); }
+.btn-quiet { background: transparent; color: var(--pine); border: 1px solid var(--border); }
+.btn-quiet:hover { background: var(--stripe); }
+
+/* ---------- checkout bar ---------- */
+
+.checkout-bar {
+  position: sticky;
+  bottom: 0;
+  background: var(--pine);
+  color: var(--paper);
+  padding: 16px 0;
+  box-shadow: 0 -8px 22px rgba(0,0,0,.18);
+}
+.checkout-bar label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13.5px; }
+.checkout-bar .search-input { margin-bottom: 12px; }
+.checkout-summary { font-weight: 600; margin-bottom: 10px; }
+.checkout-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- pin page ---------- */
+
+.pin-card {
+  max-width: 380px;
+  margin: 40px auto;
+  text-align: center;
+  background: var(--paper);
+  border: 1px solid var(--border-paper);
+  border-radius: 14px;
+  padding: 36px 28px;
+}
+.pin-card .icon { color: var(--bark); margin-bottom: 12px; }
+.pin-card input { text-align: center; letter-spacing: 4px; font-size: 18px; }
+.pin-error { color: var(--ember); font-weight: 600; min-height: 20px; margin-top: 10px; font-size: 13.5px; }
+
+/* ---------- records ---------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 4px 0 22px;
+}
+.stat-card { background: var(--canvas); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+.stat-number { font-family: 'Zilla Slab'; font-size: 28px; font-weight: 700; color: var(--pine); }
+.stat-label { font-size: 12.5px; color: var(--ink-muted); margin-top: 4px; }
+
+.record-returned { color: var(--trail-dark); font-weight: 600; }
+.record-out { color: var(--ember); font-weight: 600; }
+
+/* ---------- footer ---------- */
+
+footer { text-align: center; color: var(--ink-muted); padding: 30px 20px; font-size: 13px; }
+
+/* ---------- session timeout ---------- */
+
+.session-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 51, 40, .55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+.session-card {
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 32px 28px;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+.session-card h2 { margin: 0 0 10px; font-size: 20px; }
+.session-card p { color: var(--ink-muted); margin: 0 0 22px; }
+#sessionCountdown { font-weight: 700; color: var(--ember); }
+.session-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- mobile ---------- */
+
+@media (max-width: 700px) {
+  header h1 { font-size: 21px; }
+  header p { font-size: 13px; }
+  .emblem svg { width: 26px; height: 26px; }
+  .card { padding: 18px; }
+  .trailhead-card { padding: 18px; }
+  .pin-card { padding: 28px 20px; margin: 24px auto; }
+  .section-head h2 { font-size: 19px; }
+  .checkout-actions .btn { width: 100%; }
+  table { min-width: 0; }
+  .catalog-table :is(th, td):nth-child(4) { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="emblem" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.5 20 6v6c0 5-3.4 8.2-8 9.5-4.6-1.3-8-4.5-8-9.5V6z"/>
+        <path d="m8.5 12 2.3 2.3L15.5 9.5"/>
+      </svg>
+    </span>
+    <div>
+      <h1>Troop 149 Library</h1>
+      <p>Checkout and check-in for merit badge pamphlets, handbooks, and references</p>
+    </div>
+  </div>
+</header>
+
+<div class="note-banner">
+  * Books may not reflect the most current printing — always check <a href="https://www.scouting.org/skills/merit-badges/" target="_blank" rel="noopener">scouting.org's Merit Badge Hub</a> for up-to-date requirements before starting a badge.
+</div>
+
+<div class="container">
+
+<!-- ================= HOME ================= -->
+<section id="homePage" class="page active">
+
+  <div class="card hero-card">
+    <svg class="hero-contours" viewBox="0 0 700 180" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-20 150 C 100 100, 200 180, 320 120 S 560 60, 720 110"/>
+      <path d="M-20 168 C 120 128, 220 198, 340 148 S 580 88, 720 138"/>
+      <path d="M-20 186 C 140 158, 240 216, 360 176 S 600 118, 720 166"/>
+    </svg>
+    <h2>Welcome to the Troop 149 Library</h2>
+    <p>Every merit badge pamphlet and troop handbook we own lives here. Browse what's available, check out what you need, and return it when you're done.</p>
+
+    <div class="trailhead-grid">
+
+      <button class="trailhead-card" onclick="showPage('catalogPage')">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 5.5c2.2-1 5-1 7 .3v13c-2-1.3-4.8-1.3-7-.3z"/>
+            <path d="M21 5.5c-2.2-1-5-1-7 .3v13c2-1.3 4.8-1.3 7-.3z"/>
+          </svg>
+        </span>
+        <h3>Browse the Catalog</h3>
+        <p>Search current and vintage merit badge pamphlets, plus handbooks and references, then check out what you need.</p>
+      </button>
+
+      <button class="trailhead-card brass" onclick="showPage('checkinPage')">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 7 4 11l4 4"/>
+            <path d="M4 11h11a5 5 0 0 1 0 10h-2"/>
+          </svg>
+        </span>
+        <h3>Return a Book</h3>
+        <p>Check in books you're returning and note their condition.</p>
+      </button>
+
+      <button class="trailhead-card pine" onclick="showPage('pinPage')">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="4" width="14" height="17" rx="2"/>
+            <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/>
+            <path d="M8.5 11h7M8.5 15h7M8.5 19h4"/>
+          </svg>
+        </span>
+        <h3>Checkout Records</h3>
+        <p>See who has what checked out and browse checkout history.</p>
+        <span class="tag">Librarian access</span>
+      </button>
+
+      <button class="trailhead-card bark" onclick="showPage('resourcesPage')">
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="m14.5 9.5-2 5-5 2 2-5z"/>
+          </svg>
+        </span>
+        <h3>Troop Resources</h3>
+        <p>Shared photos, merit badge tools, leadership guides, and the troop calendar.</p>
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ================= CATALOG ================= -->
+<section id="catalogPage" class="page">
+
+  <button class="back-btn" onclick="showPage('homePage')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    Home
+  </button>
+
+  <!-- Modern -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot"></span>
+      <h2>Merit Badge Pamphlets</h2>
+    </div>
+    <p class="section-sub">Current editions, in good condition.</p>
+
+    <input type="text" id="modernSearch" class="search-input" placeholder="Search by title or book number…" oninput="renderCatalog()">
+
+    <div class="filter-row">
+      <label class="filter-chip"><input type="checkbox" id="modernEagleOnly" onchange="renderCatalog()"> Eagle required</label>
+      <label class="filter-chip"><input type="checkbox" id="modernAlphabetical" onchange="renderCatalog()"> Alphabetical order</label>
+      <label class="filter-chip"><input type="checkbox" id="modernAvailableOnly" onchange="renderCatalog()"> Available only</label>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="catalog-table">
+        <thead><tr><th>Check out</th><th>Book #</th><th>Title</th><th>Condition</th><th>Eagle</th><th>Status</th></tr></thead>
+        <tbody id="modernBooks"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Vintage merit badge -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot brass"></span>
+      <h2>Vintage Merit Badge Pamphlets</h2>
+    </div>
+    <p class="section-sub">Older editions and retired badges, kept as backups and for reference.</p>
+
+    <input type="text" id="vintageSearch" class="search-input" placeholder="Search by title or book number…" oninput="renderCatalog()">
+
+    <div class="filter-row">
+      <label class="filter-chip"><input type="checkbox" id="vintageEagleOnly" onchange="renderCatalog()"> Eagle required</label>
+      <label class="filter-chip"><input type="checkbox" id="vintageAlphabetical" onchange="renderCatalog()"> Alphabetical order</label>
+      <label class="filter-chip"><input type="checkbox" id="vintageAvailableOnly" onchange="renderCatalog()"> Available only</label>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="catalog-table">
+        <thead><tr><th>Check out</th><th>Book #</th><th>Title</th><th>Condition</th><th>Eagle</th><th>Status</th></tr></thead>
+        <tbody id="vintageBooks"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Misc / reference -->
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot bark"></span>
+      <h2>Handbooks &amp; Reference Books</h2>
+    </div>
+    <p class="section-sub">Troop and patrol resources that aren't tied to a specific badge.</p>
+
+    <input type="text" id="miscSearch" class="search-input" placeholder="Search by title or book number…" oninput="renderCatalog()">
+
+    <div class="filter-row">
+      <label class="filter-chip"><input type="checkbox" id="miscAlphabetical" onchange="renderCatalog()"> Alphabetical order</label>
+      <label class="filter-chip"><input type="checkbox" id="miscAvailableOnly" onchange="renderCatalog()"> Available only</label>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="catalog-table">
+        <thead><tr><th>Check out</th><th>Book #</th><th>Title</th><th>Condition</th><th>Eagle</th><th>Status</th></tr></thead>
+        <tbody id="miscBooks"></tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ================= CHECKOUT BAR ================= -->
+<div id="checkoutBar" class="checkout-bar" style="display:none;">
+  <div class="container" style="margin:0 auto;">
+    <div class="checkout-summary">Selected books: <span id="selectedCount">0</span></div>
+    <label for="borrowerName">Scout's name</label>
+    <input type="text" id="borrowerName" class="search-input" placeholder="Enter first and last name">
+    <div class="checkout-actions" style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="completeCheckout()">Check Out Selected</button>
+      <button class="btn btn-quiet" onclick="clearSelections()">Clear Selection</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= CHECK-IN ================= -->
+<section id="checkinPage" class="page">
+
+  <button class="back-btn" onclick="showPage('homePage')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    Home
+  </button>
+
+  <div class="card">
+    <h2>Return a Book</h2>
+    <p class="section-sub">Select what's coming back and note its condition, then complete the return.</p>
+    <div id="checkinList" class="loading">Loading checked-out books…</div>
+  </div>
+
+</section>
+
+
+<!-- ================= PIN ================= -->
+<section id="pinPage" class="page">
+
+  <button class="back-btn" onclick="showPage('homePage')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    Home
+  </button>
+
+  <div class="pin-card">
+    <span class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </span>
+    <h2>Librarian Records</h2>
+    <p class="section-sub">Enter the librarian PIN to view checkout records.</p>
+
+    <input type="password" id="pinInput" class="search-input" placeholder="Enter PIN" inputmode="numeric">
+    <br><br>
+    <button class="btn btn-primary" onclick="checkPin()">Access Records</button>
+
+    <p id="pinError" class="pin-error"></p>
+  </div>
+
+</section>
+
+
+<!-- ================= RECORDS ================= -->
+<section id="recordsPage" class="page">
+
+  <button class="back-btn" onclick="showPage('homePage')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    Home
+  </button>
+
+  <div class="card">
+    <h2>Checkout Records</h2>
+
+    <div class="stats">
+      <div class="stat-card"><div class="stat-number" id="totalBooks">–</div><div class="stat-label">Total books</div></div>
+      <div class="stat-card"><div class="stat-number" id="booksOut">–</div><div class="stat-label">Currently out</div></div>
+      <div class="stat-card"><div class="stat-number" id="booksIn">–</div><div class="stat-label">Currently in</div></div>
+      <div class="stat-card"><div class="stat-number" id="totalCheckouts">–</div><div class="stat-label">Total checkouts</div></div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Book #</th><th>Title</th><th>Checked out by</th><th>Checkout date</th><th>Status</th><th>Check-in date</th><th>Condition</th></tr></thead>
+        <tbody id="recordsTable"></tbody>
+      </table>
+    </div>
+
+    <br>
+    <button class="btn btn-quiet" onclick="loadRecords()">Refresh</button>
+  </div>
+
+</section>
+
+
+<!-- ================= RESOURCES ================= -->
+<section id="resourcesPage" class="page">
+
+  <button class="back-btn" onclick="showPage('homePage')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    Home
+  </button>
+
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot"></span>
+      <h2>Shared Media</h2>
+    </div>
+    <p class="section-sub">View photos from troop events, and upload your own to share with everyone.</p>
+    <a class="btn btn-primary" href="https://photos.app.goo.gl/6yGEE3UNUKEWtk9r5" target="_blank" rel="noopener">Open Troop Photo Album</a>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot brass"></span>
+      <h2>How to Find a Merit Badge Counselor</h2>
+    </div>
+    <p class="section-sub">Step-by-step instructions for pulling a merit badge counselor list through my.scouting.org's council and district roster reports.</p>
+    <a class="btn btn-primary" href="https://help.scoutbook.scouting.org/knowledge-base/merit-badge-counselor-list-for-councils-and-districts-myscouting/" target="_blank" rel="noopener">How to Find a Counselor</a>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot bark"></span>
+      <h2>Online Merit Badge Books</h2>
+    </div>
+    <p class="section-sub">The official Scouts BSA Merit Badge Hub — browse every badge and its current requirements online.</p>
+    <a class="btn btn-primary" href="https://www.scouting.org/skills/merit-badges/" target="_blank" rel="noopener">Open Merit Badge Hub</a>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot pine"></span>
+      <h2>Leadership Resources</h2>
+    </div>
+    <p class="section-sub">The official Scouts BSA Troop Leader Resources hub — planning tools and guides for running an effective, Scout-led troop.</p>
+    <ul class="resource-links">
+      <li><a href="https://troopleader.scouting.org/" target="_blank" rel="noopener">Troop Leader Resources</a> — the full site: meeting plans, training, and general troop guidance.</li>
+      <li><a href="https://troopleader.scouting.org/troop-planning/monthly/troop-meetings/" target="_blank" rel="noopener">Troop Meetings</a> — how to plan and run a well-structured weekly meeting.</li>
+      <li><a href="https://troopleader.scouting.org/troop-planning/monthly/patrol-leaders-council/" target="_blank" rel="noopener">Patrol Leaders' Council</a> — guidance for running the PLC, where youth leaders plan ahead.</li>
+      <li><a href="https://troopleader.scouting.org/program-features/" target="_blank" rel="noopener">Program Features</a> — monthly themes and ready-made meeting plans to build a year around.</li>
+      <li><a href="https://troopleader.scouting.org/activities/" target="_blank" rel="noopener">Activities</a> — ideas for outings, campouts, and service projects.</li>
+      <li><a href="https://troopleader.scouting.org/rank-advancement-skills/" target="_blank" rel="noopener">Rank Advancement Skills</a> — resources for teaching the skills Scouts need to advance.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="section-head">
+      <span class="section-dot"></span>
+      <h2>Calendar &amp; RSVP</h2>
+    </div>
+    <p class="section-sub">See upcoming troop events and RSVP through TroopWebHost.</p>
+    <a class="btn btn-primary" href="https://www.troopwebhost.org/Troop149Windsor/Index.htm" target="_blank" rel="noopener">Open Troop Calendar</a>
+  </div>
+
+</section>
+
+</div>
+
+<footer>Troop 149 Library System</footer>
+
+<div id="sessionWarning" class="session-overlay" style="display:none;">
+  <div class="session-card">
+    <h2>Are you still there?</h2>
+    <p>Your session will expire in <span id="sessionCountdown">20</span> seconds due to inactivity.</p>
+    <div class="session-actions">
+      <button class="btn btn-primary" onclick="continueSession()">Continue</button>
+      <button class="btn btn-quiet" onclick="endSession()">No, go home</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+/* ============================== SUPABASE ============================== */
+
+const SUPABASE_URL = "https://mlxboxtsxhbgmeipmvej.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XWP2jZohn649ABQPqM_eug_6X9Pc0h9";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ============================== STATE ============================== */
+
+let books = [];
+let selectedBooks = new Set();
+
+/* ============================== NAVIGATION ============================== */
+
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  if (pageId === "catalogPage") loadBooks();
+  if (pageId === "checkinPage") loadCheckin();
+  if (pageId === "recordsPage") loadRecords();
+
+  updateCheckoutBar();
+}
+
+/* ============================== CATALOG ============================== */
+
+async function loadBooks() {
+  ["modernBooks", "vintageBooks", "miscBooks"].forEach(id => {
+    document.getElementById(id).innerHTML = `<tr><td colspan="6" class="loading">Loading the catalog…</td></tr>`;
+  });
+
+  const { data, error } = await supabaseClient.from("library_books").select("*");
+
+  if (error) {
+    const message = `<tr><td colspan="6">Couldn't load the catalog: ${escapeHtml(error.message)}. Try refreshing the page.</td></tr>`;
+    ["modernBooks", "vintageBooks", "miscBooks"].forEach(id => {
+      document.getElementById(id).innerHTML = message;
+    });
+    return;
+  }
+
+  books = data || [];
+  renderCatalog();
+}
+
+function readFilters(ids) {
+  return {
+    search: (document.getElementById(ids.search)?.value || "").toLowerCase().trim(),
+    eagleOnly: ids.eagle ? (document.getElementById(ids.eagle)?.checked || false) : false,
+    alphabetical: document.getElementById(ids.alpha)?.checked || false,
+    availableOnly: document.getElementById(ids.avail)?.checked || false
+  };
+}
+
+function filterBooks(list, filters) {
+  return list.filter(book => {
+    const matchesSearch =
+      book.title.toLowerCase().includes(filters.search) ||
+      book.book_number.toLowerCase().includes(filters.search);
+    const matchesEagle = !filters.eagleOnly || book.eagle_required === true;
+    const matchesAvailable = !filters.availableOnly || book.status === "IN";
+    return matchesSearch && matchesEagle && matchesAvailable;
+  });
+}
+
+function sortBooks(list, alphabetical) {
+  if (alphabetical) {
+    list.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    list.sort((a, b) => a.book_number.localeCompare(b.book_number, undefined, { numeric: true }));
+  }
+  return list;
+}
+
+function renderSection(tbodyId, list, emptyMessage) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = list.length
+    ? list.map(bookRow).join("")
+    : `<tr><td colspan="6" class="empty">${escapeHtml(emptyMessage)}</td></tr>`;
+}
+
+function renderCatalog() {
+  if (!books.length) {
+    renderSection("modernBooks", [], "No books are in the library yet.");
+    renderSection("vintageBooks", [], "No books are in the library yet.");
+    renderSection("miscBooks", [], "No books are in the library yet.");
+    return;
+  }
+
+  const modernFilters = readFilters({ search: "modernSearch", eagle: "modernEagleOnly", alpha: "modernAlphabetical", avail: "modernAvailableOnly" });
+  let modernBooks = filterBooks(books.filter(b => b.category === "Modern Merit Badge"), modernFilters);
+  sortBooks(modernBooks, modernFilters.alphabetical);
+  renderSection("modernBooks", modernBooks, "No pamphlets match your search or filters.");
+
+  const vintageFilters = readFilters({ search: "vintageSearch", eagle: "vintageEagleOnly", alpha: "vintageAlphabetical", avail: "vintageAvailableOnly" });
+  let vintageBooks = filterBooks(books.filter(b => b.category === "Vintage Merit Badge"), vintageFilters);
+  sortBooks(vintageBooks, vintageFilters.alphabetical);
+  renderSection("vintageBooks", vintageBooks, "No vintage pamphlets match your search or filters.");
+
+  const miscFilters = readFilters({ search: "miscSearch", eagle: null, alpha: "miscAlphabetical", avail: "miscAvailableOnly" });
+  let miscBooks = filterBooks(books.filter(b => b.category === "Vintage Resource"), miscFilters);
+  sortBooks(miscBooks, miscFilters.alphabetical);
+  renderSection("miscBooks", miscBooks, "No handbooks or references match your search.");
+}
+
+function bookRow(book) {
+  const isSelected = selectedBooks.has(book.id);
+  const isOut = book.status === "OUT";
+
+  return `
+    <tr>
+      <td>${
+        isOut
+          ? `<span class="unavailable">Unavailable</span>`
+          : `<input type="checkbox" ${isSelected ? "checked" : ""} onchange="toggleBook(${book.id})" aria-label="Select ${escapeHtml(book.title)}">`
+      }</td>
+      <td class="book-code">${escapeHtml(book.book_number)}</td>
+      <td>${escapeHtml(book.title)}</td>
+      <td>${escapeHtml(book.condition)}</td>
+      <td>${book.eagle_required ? `<span class="pill pill-eagle">Eagle required</span>` : ""}</td>
+      <td>${isOut ? `<span class="pill pill-out">Out</span>` : `<span class="pill pill-in">In</span>`}</td>
+    </tr>
+  `;
+}
+
+/* ============================== SELECTION & CHECKOUT ============================== */
+
+function toggleBook(bookId) {
+  if (selectedBooks.has(bookId)) {
+    selectedBooks.delete(bookId);
+  } else {
+    selectedBooks.add(bookId);
+  }
+  updateCheckoutBar();
+  renderCatalog();
+}
+
+function updateCheckoutBar() {
+  const bar = document.getElementById("checkoutBar");
+  const catalogActive = document.getElementById("catalogPage").classList.contains("active");
+  bar.style.display = (catalogActive && selectedBooks.size > 0) ? "block" : "none";
+  document.getElementById("selectedCount").textContent = selectedBooks.size;
+}
+
+async function completeCheckout() {
+  const name = document.getElementById("borrowerName").value.trim();
+
+  if (!name) { alert("Please enter the scout's name."); return; }
+  if (selectedBooks.size === 0) { alert("Please select at least one book."); return; }
+
+  const selected = books.filter(book => selectedBooks.has(book.id));
+
+  if (selected.some(book => book.status !== "IN")) {
+    alert("One of the selected books was just checked out by someone else. Refreshing the catalog.");
+    selectedBooks.clear();
+    await loadBooks();
+    return;
+  }
+
+  const now = new Date().toISOString();
+
+  for (const book of selected) {
+    const { data: updated, error: updateError } = await supabaseClient
+      .from("library_books")
+      .update({ status: "OUT", checked_out_by: name, checked_out_at: now, checked_in_at: null, checkin_condition: null })
+      .eq("id", book.id)
+      .eq("status", "IN")
+      .select();
+
+    if (updateError || !updated || updated.length === 0) {
+      alert("A checkout could not be completed. Please refresh the catalog and try again.");
+      await loadBooks();
+      return;
+    }
+
+    const { error: recordError } = await supabaseClient
+      .from("checkout_records")
+      .insert({ book_id: book.id, book_number: book.book_number, title: book.title, checked_out_by: name, checked_out_at: now });
+
+    if (recordError) {
+      alert("The book status was updated, but the checkout record could not be saved. Please notify the librarian.");
+      await loadBooks();
+      return;
+    }
+  }
+
+  alert(`Checkout complete for ${name}.`);
+  selectedBooks.clear();
+  document.getElementById("borrowerName").value = "";
+  await loadBooks();
+  updateCheckoutBar();
+}
+
+function clearSelections() {
+  selectedBooks.clear();
+  document.getElementById("borrowerName").value = "";
+  updateCheckoutBar();
+  renderCatalog();
+}
+
+/* ============================== CHECK-IN ============================== */
+
+async function loadCheckin() {
+  const container = document.getElementById("checkinList");
+  container.innerHTML = `<div class="loading">Loading checked-out books…</div>`;
+
+  const { data, error } = await supabaseClient
+    .from("library_books")
+    .select("*")
+    .eq("status", "OUT")
+    .order("title");
+
+  if (error) {
+    container.innerHTML = `<div class="empty">Couldn't load checked-out books: ${escapeHtml(error.message)}.</div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.innerHTML = `<div class="empty">Nothing is checked out right now.</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Return</th><th>Book #</th><th>Title</th><th>Checked out by</th><th>Checkout date</th><th>Original condition</th><th>Condition when returned</th></tr>
+        </thead>
+        <tbody>
+          ${data.map(book => `
+            <tr>
+              <td><input type="checkbox" class="return-check" data-id="${book.id}" aria-label="Return ${escapeHtml(book.title)}"></td>
+              <td class="book-code">${escapeHtml(book.book_number)}</td>
+              <td>${escapeHtml(book.title)}</td>
+              <td>${escapeHtml(book.checked_out_by || "")}</td>
+              <td>${formatDate(book.checked_out_at)}</td>
+              <td>${escapeHtml(book.condition)}</td>
+              <td>
+                <select class="return-condition search-input" data-id="${book.id}">
+                  <option value="Good">Good</option>
+                  <option value="Moderate">Moderate</option>
+                  <option value="Poor">Poor</option>
+                </select>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+    <br>
+    <button class="btn btn-primary" onclick="completeCheckin()">Complete Return</button>
+  `;
+}
+
+async function completeCheckin() {
+  const checks = [...document.querySelectorAll(".return-check:checked")];
+
+  if (checks.length === 0) { alert("Please select at least one book to return."); return; }
+
+  const now = new Date().toISOString();
+
+  for (const checkbox of checks) {
+    const id = Number(checkbox.dataset.id);
+    const conditionSelect = document.querySelector(`.return-condition[data-id="${id}"]`);
+    const returnedCondition = conditionSelect ? conditionSelect.value : "Good";
+
+    const { data: bookData, error: bookError } = await supabaseClient
+      .from("library_books")
+      .select("*")
+      .eq("id", id)
+      .eq("status", "OUT")
+      .single();
+
+    if (bookError || !bookData) { alert("One of the selected books could not be found."); continue; }
+
+    const { error: updateError } = await supabaseClient
+      .from("library_books")
+      .update({ status: "IN", checked_in_at: now, checkin_condition: returnedCondition })
+      .eq("id", id)
+      .eq("status", "OUT");
+
+    if (updateError) { alert("There was an error checking in " + bookData.title); continue; }
+
+    const { data: record } = await supabaseClient
+      .from("checkout_records")
+      .select("id")
+      .eq("book_id", id)
+      .is("checked_in_at", null)
+      .order("checked_out_at", { ascending: false })
+      .limit(1);
+
+    if (record && record.length > 0) {
+      await supabaseClient
+        .from("checkout_records")
+        .update({ checked_in_at: now, condition_at_checkin: returnedCondition })
+        .eq("id", record[0].id);
+    }
+  }
+
+  alert("Selected resources have been checked in.");
+  loadCheckin();
+}
+
+/* ============================== LIBRARIAN PIN ============================== */
+
+function checkPin() {
+  const pin = document.getElementById("pinInput").value;
+
+  if (pin === "1234") {
+    document.getElementById("pinInput").value = "";
+    document.getElementById("pinError").textContent = "";
+    showPage("recordsPage");
+  } else {
+    document.getElementById("pinError").textContent = "Incorrect PIN.";
+  }
+}
+
+/* ============================== RECORDS ============================== */
+
+async function loadRecords() {
+  const table = document.getElementById("recordsTable");
+  table.innerHTML = `<tr><td colspan="7" class="loading">Loading records…</td></tr>`;
+
+  const { data: records, error } = await supabaseClient
+    .from("checkout_records")
+    .select("*")
+    .order("checked_out_at", { ascending: false });
+
+  if (error) {
+    table.innerHTML = `<tr><td colspan="7">Couldn't load records: ${escapeHtml(error.message)}.</td></tr>`;
+    return;
+  }
+
+  const { data: allBooks } = await supabaseClient.from("library_books").select("status");
+  const total = allBooks?.length || 0;
+  const out = allBooks?.filter(book => book.status === "OUT").length || 0;
+
+  document.getElementById("totalBooks").textContent = total;
+  document.getElementById("booksOut").textContent = out;
+  document.getElementById("booksIn").textContent = total - out;
+  document.getElementById("totalCheckouts").textContent = records?.length || 0;
+
+  if (!records || records.length === 0) {
+    table.innerHTML = `<tr><td colspan="7" class="empty">No checkouts have been recorded yet.</td></tr>`;
+    return;
+  }
+
+  table.innerHTML = records.map(record => {
+    const returned = !!record.checked_in_at;
+    return `
+      <tr>
+        <td class="book-code">${escapeHtml(record.book_number)}</td>
+        <td>${escapeHtml(record.title)}</td>
+        <td>${escapeHtml(record.checked_out_by)}</td>
+        <td>${formatDate(record.checked_out_at)}</td>
+        <td>${returned ? `<span class="record-returned">Returned</span>` : `<span class="record-out">Out</span>`}</td>
+        <td>${returned ? formatDate(record.checked_in_at) : "—"}</td>
+        <td>${record.condition_at_checkin ? escapeHtml(record.condition_at_checkin) : "—"}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* ============================== HELPERS ============================== */
+
+function formatDate(dateString) {
+  if (!dateString) return "—";
+  return new Date(dateString).toLocaleString();
+}
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* ============================== SESSION TIMEOUT ============================== */
+
+const INACTIVITY_LIMIT_MS = 5 * 60 * 1000; // 5 minutes
+const WARNING_SECONDS = 20;
+
+let inactivityTimer = null;
+let countdownInterval = null;
+let warningActive = false;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(showSessionWarning, INACTIVITY_LIMIT_MS);
+}
+
+function showSessionWarning() {
+  warningActive = true;
+  let secondsLeft = WARNING_SECONDS;
+
+  document.getElementById("sessionCountdown").textContent = secondsLeft;
+  document.getElementById("sessionWarning").style.display = "flex";
+
+  countdownInterval = setInterval(() => {
+    secondsLeft -= 1;
+    document.getElementById("sessionCountdown").textContent = secondsLeft;
+    if (secondsLeft <= 0) {
+      clearInterval(countdownInterval);
+      endSession();
+    }
+  }, 1000);
+}
+
+function continueSession() {
+  warningActive = false;
+  clearInterval(countdownInterval);
+  document.getElementById("sessionWarning").style.display = "none";
+  resetInactivityTimer();
+}
+
+function endSession() {
+  warningActive = false;
+  clearInterval(countdownInterval);
+  document.getElementById("sessionWarning").style.display = "none";
+
+  selectedBooks.clear();
+  const borrowerInput = document.getElementById("borrowerName");
+  if (borrowerInput) borrowerInput.value = "";
+  updateCheckoutBar();
+
+  showPage("homePage");
+  resetInactivityTimer();
+}
+
+function handleActivity() {
+  if (warningActive) return; // ignore ambient activity while the warning is up
+  resetInactivityTimer();
+}
+
+["mousemove", "mousedown", "keydown", "touchstart", "scroll"].forEach(evt => {
+  document.addEventListener(evt, handleActivity, { passive: true });
+});
+
+/* ============================== INITIAL LOAD ============================== */
+
+loadBooks();
+resetInactivityTimer();
+
+</script>
+
+</body>
+</html>
