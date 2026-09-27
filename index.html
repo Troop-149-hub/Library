@@ -1095,6 +1095,12 @@ function resetInactivityTimer() {
 }
 
 function showSessionWarning() {
+  const homeActive = document.getElementById("homePage").classList.contains("active");
+  if (homeActive) {
+    resetInactivityTimer(); // nothing to expire on the home screen — just keep waiting
+    return;
+  }
+
   warningActive = true;
   let secondsLeft = WARNING_SECONDS;
 
